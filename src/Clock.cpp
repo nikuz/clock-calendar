@@ -305,6 +305,6 @@ void Clock::showMinutes(uint16_t brightness) {
     minutesLeds.show();
 }
 
-float Clock::getHoursBrightness(uint16_t brightness) { return max(brightness / 100.0F / 2.0F, 0.02F); }
+float Clock::getHoursBrightness(uint16_t brightness) { return max(brightness / 100.0F / 2.0F, 0.01F); }
 
-float Clock::getMinutesBrightness(uint16_t brightness) { return max(brightness / 100.0F / 5.0F, 0.02F); }
+float Clock::getMinutesBrightness(uint16_t brightness) { return max(brightness / 100.0F / 5.0F, 0.01F); }

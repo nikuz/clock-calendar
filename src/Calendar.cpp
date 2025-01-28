@@ -338,4 +338,4 @@ void Calendar::clearLoading() {
     }
 }
 
-float Calendar::getCalendarBrightness(uint16_t brightness) { return max(brightness / 100.0F / 5.0F, 0.02F); }
+float Calendar::getCalendarBrightness(uint16_t brightness) { return max(brightness / 100.0F / 5.0F, 0.01F); }
