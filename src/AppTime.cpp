@@ -1,7 +1,8 @@
+#include "AppTime.h"
+
 #include <Arduino.h>
 
 #include "def.h"
-#include "AppTime.h"
 
 AppTime::AppTime() {}
 
@@ -18,7 +19,7 @@ void AppTime::config() {
 
 bool AppTime::hasLocalTime() {
     struct tm timeinfo;
-    if(!getLocalTime(&timeinfo)){
+    if (!getLocalTime(&timeinfo)) {
         return false;
     }
     return true;
@@ -31,7 +32,7 @@ void AppTime::obtainTime() {
 
 void AppTime::printLocalTime() {
     struct tm timeinfo;
-    if(!getLocalTime(&timeinfo)){
+    if (!getLocalTime(&timeinfo)) {
         Serial.println("Failed to obtain time");
         return;
     }

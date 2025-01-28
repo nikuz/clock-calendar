@@ -1,12 +1,11 @@
 #ifndef Utils_h
 #define Utils_h
 
-#include <Arduino.h>
 #include <Adafruit_NeoPixel.h>
+#include <Arduino.h>
 
-class Utils
-{
-public:
+class Utils {
+   public:
     Utils();
 
     ~Utils();

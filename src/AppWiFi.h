@@ -4,7 +4,7 @@
 #include <Arduino.h>
 
 class AppWiFi {
-public:
+   public:
     AppWiFi();
 
     ~AppWiFi();

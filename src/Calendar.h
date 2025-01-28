@@ -3,34 +3,42 @@
 
 #include <Arduino.h>
 
-struct CalendarEvent
-{
+struct CalendarEvent {
     struct tm startTime;
     struct tm endTime;
     String status;
     String summary;
+    int startLedIndex;
+    int endLedIndex;
+    uint32_t color;
+};
+
+struct NextCalendarEvent {
+    int startLedIndex;
 };
 
 class Calendar {
-public:
+   public:
     Calendar();
 
     ~Calendar();
 
-    static void init();
+    static void init(uint16_t brightness);
 
     static void retrieveEvents();
 
-    static void showEvents();
+    static void showEvents(uint16_t brightness);
+
+    static void checkIfEventIsApproaching();
+
+   private:
+    static uint16_t getEventColor(int eventIndex);
 
     static void showLoading();
 
-private:
+    static void clearLoading();
 
-    static bool isTimeInsideEvent(const struct tm time);
-
-    static bool eventIsApproaching();
-
+    static float getCalendarBrightness(uint16_t brightness);
 };
 
 #endif /* Calendar_h */

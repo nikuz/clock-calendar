@@ -1,11 +1,12 @@
+#include "AppWiFi.h"
+
 #include <Arduino.h>
 #include <WiFi.h>
 #include <WiFiMulti.h>
 
-#include "def.h"
-#include "WiFiClient.h"
-#include "AppWiFi.h"
 #include "AppWiFiDef.h"
+#include "WiFiClient.h"
+#include "def.h"
 
 AppWiFi::AppWiFi() {}
 
@@ -24,9 +25,7 @@ void AppWiFi::connect() {
     Serial.println("WiFi Connected");
 }
 
-bool AppWiFi::isConnected() {
-    return WiFi.status() == WL_CONNECTED;
-}
+bool AppWiFi::isConnected() { return WiFi.status() == WL_CONNECTED; }
 
 void AppWiFi::disconnect() {
     WiFi.disconnect(true);

@@ -4,7 +4,7 @@
 #include <Arduino.h>
 
 class AppTime {
-public:
+   public:
     AppTime();
 
     ~AppTime();

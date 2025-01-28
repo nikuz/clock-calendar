@@ -1,19 +1,19 @@
 #include <Arduino.h>
 
-#include "def.h"
-#include "AppWiFi.h"
 #include "AppTime.h"
+#include "AppWiFi.h"
+#include "Brightness.h"
 #include "Calendar.h"
 #include "Clock.h"
+#include "def.h"
 
-TaskHandle_t loadCalendarEventsTask;
+TaskHandle_t secondCoreLoopTask;
 
-void loadCalendarEventsTaskLoop(void *pvParameters)
-{
-    for (;;)
-    {
+void secondCoreLoop(void *pvParameters) {
+    for (;;) {
         Calendar::retrieveEvents();
-        // Serial.println(uxTaskGetStackHighWaterMark(loadCalendarEventsTask)); // check task memory usage
+        // Serial.println(uxTaskGetStackHighWaterMark(loadCalendarEventsTask)); //
+        // check task memory usage
         vTaskDelay(10 / portTICK_PERIOD_MS);
     }
 }
@@ -21,19 +21,19 @@ void loadCalendarEventsTaskLoop(void *pvParameters)
 void setup() {
     Serial.begin(SERIAL_BAUD);
 
-    xTaskCreatePinnedToCore(
-        loadCalendarEventsTaskLoop, /* Task function. */
-        "LoadCalendarEventsTask",   /* name of task. */
-        10000,                      /* Stack size of task */
-        NULL,                       /* parameter of the task */
-        1,                          /* priority of the task */
-        &loadCalendarEventsTask,    /* Task handle to keep track of created task */
-        0
-    );                         /* pin task to core 0 */
+    xTaskCreatePinnedToCore(secondCoreLoop,      /* Task function. */
+                            "secondCoreLoop",    /* name of task. */
+                            10000,               /* Stack size of task */
+                            NULL,                /* parameter of the task */
+                            1,                   /* priority of the task */
+                            &secondCoreLoopTask, /* Task handle to keep track of created task */
+                            0);                  /* pin task to core 0 */
 
-    Clock::init();
-    Calendar::init();
-    Calendar::showLoading();
+    Brightness::init();
+    uint16_t brightness = Brightness::get();
+
+    Clock::init(brightness);
+    Calendar::init(brightness);
 }
 
 void loop() {
@@ -42,6 +42,16 @@ void loop() {
         AppTime::config();
     }
 
-    Clock::showHours();
-    Calendar::showEvents(); // minutes are rendered inside the events
+    uint16_t brightness = Brightness::get();
+
+    // uint16_t test = 55;
+    // Serial.println();
+
+    Clock::showHours(brightness);
+    Clock::showMinutes(brightness);
+
+    Calendar::checkIfEventIsApproaching();
+    Calendar::showEvents(brightness);
+
+    delay(1);
 }
