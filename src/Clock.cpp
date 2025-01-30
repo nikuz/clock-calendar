@@ -285,7 +285,7 @@ void Clock::showMinutes(uint16_t brightness) {
     uint32_t regularBorderColor = Utils::rgbToRgba(hourBorderColor, currentMinuteBrightness);
 
     for (int i = 0; i < LED_STRIP_LENGTH; i++) {
-        if (i >= currentHour * LEDS_PER_HOUR && i < currentHour * LEDS_PER_HOUR + LEDS_PER_HOUR) {
+        if (i >= timeinfo.tm_hour * LEDS_PER_HOUR && i < timeinfo.tm_hour * LEDS_PER_HOUR + LEDS_PER_HOUR) {
             if (isNight) {
                 minutesLeds.setPixelColor(i, nightBorderColor);
             } else {
@@ -300,7 +300,7 @@ void Clock::showMinutes(uint16_t brightness) {
     if (isNight) {
         minuteColor = nightCurrentMinuteColor;
     }
-    minutesLeds.setPixelColor(currentHour * LEDS_PER_HOUR + currentMinute / 10, Utils::rgbToRgba(minuteColor, currentMinuteBrightness));
+    minutesLeds.setPixelColor(timeinfo.tm_hour * LEDS_PER_HOUR + currentMinute / 10, Utils::rgbToRgba(minuteColor, currentMinuteBrightness));
 
     minutesLeds.show();
 }
