@@ -28,7 +28,7 @@ bool eventsRendered = false;
 const unsigned long eventsRetrievalInterval = 60UL * 1000UL;  // every minute
 unsigned long lastEventsRetrievalTime = millis() - eventsRetrievalInterval - 1UL;
 int approachingEventIndex = -1;
-int approachingEventBlinkCycle = 1;
+bool approachingEventBlinkCycleHigh = false;
 unsigned long approachingEventBlinkCycleChangeTime = millis();
 unsigned long approachingEventBlinkInterval = 1000UL;
 int lastEventIsApproachingCheckTime = -1;
@@ -78,14 +78,19 @@ void Calendar::init(uint16_t brightness) {
 }
 
 void Calendar::showEvents(uint16_t brightness) {
-    if (!eventsRetrieved) {
+    struct tm timeinfo;
+    if (!eventsRetrieved || !getLocalTime(&timeinfo)) {
         showLoading();
         return;
     }
 
-    if ((eventsRendered && abs(brightness - currentCalendarRawBrightness) < CHANGE_BRIGHTNESS_THRESHOLD &&
-         (approachingEventIndex == -1 || millis() - approachingEventBlinkCycleChangeTime < approachingEventBlinkInterval)) ||
-        todaysEvents.size() == 0) {
+    bool noEvents = todaysEvents.size() == 0;
+    bool noBrightnessChanged = abs(brightness - currentCalendarRawBrightness) < CHANGE_BRIGHTNESS_THRESHOLD;
+    bool noEventApproaching = approachingEventIndex == -1;
+    bool eventApproachingBlinkDelay = approachingEventIndex != -1 && millis() - approachingEventBlinkCycleChangeTime < approachingEventBlinkInterval;
+    bool noEventApproachingBlinkStale = approachingEventIndex == -1 && !approachingEventBlinkCycleHigh;
+
+    if (noEvents || eventApproachingBlinkDelay || (eventsRendered && noBrightnessChanged && noEventApproaching && noEventApproachingBlinkStale)) {
         return;
     }
 
@@ -93,9 +98,15 @@ void Calendar::showEvents(uint16_t brightness) {
     currentCalendarRawBrightness = brightness;
     currentCalendarBrightness = getCalendarBrightness(brightness);
 
+    if (approachingEventIndex != -1) {
+        approachingEventBlinkCycleChangeTime = millis();
+    } else if (approachingEventBlinkCycleHigh) {
+        approachingEventBlinkCycleHigh = false;
+    }
+
     int eventIndex = 0;
     CalendarEvent event = todaysEvents[eventIndex];
-    uint32_t eventColor = getEventColor(eventIndex); 
+    uint32_t eventColor = getEventColor(eventIndex, timeinfo.tm_sec);
     bool isNight = Brightness::isNight(brightness);
 
     for (int i = 0; i < LED_STRIP_LENGTH; i++) {
@@ -112,7 +123,7 @@ void Calendar::showEvents(uint16_t brightness) {
                 eventIndex++;
                 if (eventIndex < todaysEvents.size()) {
                     event = todaysEvents[eventIndex];
-                    eventColor = getEventColor(eventIndex);
+                    eventColor = getEventColor(eventIndex, timeinfo.tm_sec);
                 }
             }
         }
@@ -120,6 +131,76 @@ void Calendar::showEvents(uint16_t brightness) {
 
     calendarLeds.show();
 }
+
+uint16_t Calendar::getEventColor(int eventIndex, int currentSecond) {
+    CalendarEvent event = todaysEvents[eventIndex];
+    uint16_t color = event.color;
+
+    if (approachingEventIndex == eventIndex && currentSecond < 59) {
+        approachingEventBlinkCycleHigh = !approachingEventBlinkCycleHigh;
+        return Utils::rgbToRgba(color, approachingEventBlinkCycleHigh ? 1 : min(currentCalendarBrightness, 0.5F));
+    }
+
+    return Utils::rgbToRgba(color, currentCalendarBrightness);
+}
+
+void Calendar::checkIfEventIsApproaching() {
+    struct tm timeinfo;
+    if (!eventsRetrieved || !getLocalTime(&timeinfo) || timeinfo.tm_min == lastEventIsApproachingCheckTime || todaysEvents.size() == 0) {
+        return;
+    }
+
+    lastEventIsApproachingCheckTime = timeinfo.tm_min;
+
+    time_t rawTime = mktime((struct tm *)&timeinfo);
+
+    for (int i = 0, l = todaysEvents.size(); i < l; i++) {
+        CalendarEvent event = todaysEvents[i];
+        time_t startRawTime = mktime((struct tm *)&event.startTime);
+        if (startRawTime > rawTime && startRawTime - rawTime <= 60L) {
+            approachingEventIndex = i;
+            return;
+        }
+    }
+
+    if (approachingEventIndex != -1) {
+        approachingEventIndex = -1;
+    }
+}
+
+void Calendar::showLoading() {
+    if (millis() - lastLoadingUpdateTime < loadingUpdateInterval) {
+        return;
+    }
+
+    lastLoadingUpdateTime = millis();
+    uint32_t color = Utils::rgbToRgba(loadingColor, currentCalendarBrightness);
+
+    for (int i = 0; i < LED_STRIP_LENGTH; i++) {
+        if (i >= loadingCurrentPosition - loadingLength && i < loadingCurrentPosition) {
+            calendarLeds.setPixelColor(i, color);
+        } else {
+            calendarLeds.setPixelColor(i, OFF_COLOR);
+        }
+    }
+
+    calendarLeds.show();
+
+    loadingCurrentPosition++;
+
+    if (loadingCurrentPosition - loadingLength > LED_STRIP_LENGTH) {
+        loadingCurrentPosition = 0;
+    }
+}
+
+void Calendar::clearLoading() {
+    if (loadingCurrentPosition != 0) {
+        loadingCurrentPosition = 0;
+        Utils::clearLeds(&calendarLeds, LED_STRIP_LENGTH);
+    }
+}
+
+float Calendar::getCalendarBrightness(uint16_t brightness) { return max(brightness / 100.0F / 5.0F, 0.01F); }
 
 bool eventsSortComparator(CalendarEvent a, CalendarEvent b) {
     time_t timeA = mktime(&a.startTime);
@@ -193,7 +274,7 @@ void Calendar::retrieveEvents() {
                             if (startIdx == -1 || endIdx == -1 || statusIdx == -1 || summaryIdx == -1) {
                                 continue;
                             }
-                            
+
                             String dtStart = vevent.substring(startIdx + 8, vevent.indexOf("\n", startIdx));
                             dtStart.trim();
 
@@ -260,82 +341,3 @@ void Calendar::retrieveEvents() {
         Serial.println("Unable to create client");
     }
 }
-
-uint16_t Calendar::getEventColor(int eventIndex) {
-    CalendarEvent event = todaysEvents[eventIndex];
-    uint16_t color = event.color;
-    float lowCycleBrightness = min(currentCalendarBrightness, 0.5F);
-
-    if (approachingEventIndex == eventIndex) {
-        approachingEventBlinkCycleChangeTime = millis();
-        if (approachingEventBlinkCycle == 1) {
-            approachingEventBlinkCycle = 0;
-            return color;
-        } else {
-            approachingEventBlinkCycle = 1;
-            return Utils::rgbToRgba(color, lowCycleBrightness);
-        }
-    }
-
-    return Utils::rgbToRgba(color, currentCalendarBrightness);
-}
-
-void Calendar::checkIfEventIsApproaching() {
-    struct tm timeinfo;
-    if (!eventsRetrieved || !getLocalTime(&timeinfo) || timeinfo.tm_min == lastEventIsApproachingCheckTime || todaysEvents.size() == 0) {
-        return;
-    }
-
-    lastEventIsApproachingCheckTime = timeinfo.tm_min;
-
-    time_t rawTime = mktime((struct tm *)&timeinfo);
-
-    for (int i = 0, l = todaysEvents.size(); i < l; i++) {
-        CalendarEvent event = todaysEvents[i];
-        time_t startRawTime = mktime((struct tm *)&event.startTime);
-        if (startRawTime > rawTime && startRawTime - rawTime <= 60L) {
-            approachingEventIndex = i;
-            approachingEventBlinkCycle = 1;
-            return;
-        }
-    }
-
-    if (approachingEventIndex != -1) {
-        approachingEventIndex = -1;
-        approachingEventBlinkCycle = 1;
-    }
-}
-
-void Calendar::showLoading() {
-    if (millis() - lastLoadingUpdateTime < loadingUpdateInterval) {
-        return;
-    }
-
-    lastLoadingUpdateTime = millis();
-    uint32_t color = Utils::rgbToRgba(loadingColor, currentCalendarBrightness);
-
-    for (int i = 0; i < LED_STRIP_LENGTH; i++) {
-        if (i >= loadingCurrentPosition - loadingLength && i < loadingCurrentPosition) {
-            calendarLeds.setPixelColor(i, color);
-        } else {
-            calendarLeds.setPixelColor(i, OFF_COLOR);
-        }
-    }
-
-    calendarLeds.show();
-
-    loadingCurrentPosition++;
-
-    if (loadingCurrentPosition - loadingLength > LED_STRIP_LENGTH) {
-        loadingCurrentPosition = 0;
-    }
-}
-
-void Calendar::clearLoading() {
-    if (loadingCurrentPosition != 0) {
-        loadingCurrentPosition = 0;
-        Utils::clearLeds(&calendarLeds, LED_STRIP_LENGTH);
-    }
-}
-
-float Calendar::getCalendarBrightness(uint16_t brightness) { return max(brightness / 100.0F / 5.0F, 0.01F); }

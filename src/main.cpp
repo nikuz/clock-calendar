@@ -40,12 +40,10 @@ void loop() {
     if (!AppWiFi::isConnected()) {
         AppWiFi::connect();
         AppTime::config();
+        // AppTime::debugSetLocalTime(2025, 1, 29, 9, 29, 45);
     }
 
     uint16_t brightness = Brightness::get();
-
-    // uint16_t test = 55;
-    // Serial.println();
 
     Clock::showHours(brightness);
     Clock::showMinutes(brightness);
