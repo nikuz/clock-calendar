@@ -16,6 +16,8 @@ class AppTime {
     static void obtainTime();
 
     static void printLocalTime();
+
+    static void debugSetLocalTime(int year, int month, int day, int hour, int minute, int second);
 };
 
 #endif /* AppTime_h */
