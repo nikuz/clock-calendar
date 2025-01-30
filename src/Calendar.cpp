@@ -18,8 +18,7 @@
 
 Adafruit_NeoPixel calendarLeds = Adafruit_NeoPixel(LED_STRIP_LENGTH, CALENDAR_LED_PIN, NEO_GRB + NEO_KHZ800);
 const uint32_t calendarEventColor = Adafruit_NeoPixel::Color(128, 0, 128);
-uint16_t currentCalendarRawBrightness = 0;
-float currentCalendarBrightness = 0;
+uint16_t currentCalendarBrightness = 0;
 
 // events
 std::vector<CalendarEvent> todaysEvents;
@@ -69,8 +68,7 @@ Calendar::Calendar() {}
 Calendar::~Calendar() {}
 
 void Calendar::init(uint16_t brightness) {
-    currentCalendarRawBrightness = brightness;
-    currentCalendarBrightness = getCalendarBrightness(brightness);
+    currentCalendarBrightness = brightness;
 
     calendarLeds.begin();
 
@@ -85,7 +83,8 @@ void Calendar::showEvents(uint16_t brightness) {
     }
 
     bool noEvents = todaysEvents.size() == 0;
-    bool noBrightnessChanged = abs(brightness - currentCalendarRawBrightness) < CHANGE_BRIGHTNESS_THRESHOLD;
+    bool noBrightnessChanged = (brightness == MIN_BRIGHTNESS && currentCalendarBrightness == brightness) ||
+                               (brightness > MIN_BRIGHTNESS && abs(brightness - currentCalendarBrightness) < CHANGE_BRIGHTNESS_THRESHOLD);
     bool noEventApproaching = approachingEventIndex == -1;
     bool eventApproachingBlinkDelay = approachingEventIndex != -1 && millis() - approachingEventBlinkCycleChangeTime < approachingEventBlinkInterval;
     bool noEventApproachingBlinkStale = approachingEventIndex == -1 && !approachingEventBlinkCycleHigh;
@@ -95,8 +94,8 @@ void Calendar::showEvents(uint16_t brightness) {
     }
 
     eventsRendered = true;
-    currentCalendarRawBrightness = brightness;
-    currentCalendarBrightness = getCalendarBrightness(brightness);
+    currentCalendarBrightness = brightness;
+    float currentBrightness = getCalendarBrightness(brightness);
 
     if (approachingEventIndex != -1) {
         approachingEventBlinkCycleChangeTime = millis();
@@ -106,7 +105,7 @@ void Calendar::showEvents(uint16_t brightness) {
 
     int eventIndex = 0;
     CalendarEvent event = todaysEvents[eventIndex];
-    uint32_t eventColor = getEventColor(eventIndex, timeinfo.tm_sec);
+    uint32_t eventColor = getEventColor(eventIndex, timeinfo.tm_sec, currentBrightness);
     bool isNight = Brightness::isNight(brightness);
 
     for (int i = 0; i < LED_STRIP_LENGTH; i++) {
@@ -123,7 +122,7 @@ void Calendar::showEvents(uint16_t brightness) {
                 eventIndex++;
                 if (eventIndex < todaysEvents.size()) {
                     event = todaysEvents[eventIndex];
-                    eventColor = getEventColor(eventIndex, timeinfo.tm_sec);
+                    eventColor = getEventColor(eventIndex, timeinfo.tm_sec, currentBrightness);
                 }
             }
         }
@@ -132,16 +131,16 @@ void Calendar::showEvents(uint16_t brightness) {
     calendarLeds.show();
 }
 
-uint16_t Calendar::getEventColor(int eventIndex, int currentSecond) {
+uint16_t Calendar::getEventColor(int eventIndex, int currentSecond, float brightness) {
     CalendarEvent event = todaysEvents[eventIndex];
     uint16_t color = event.color;
 
     if (approachingEventIndex == eventIndex && currentSecond < 59) {
         approachingEventBlinkCycleHigh = !approachingEventBlinkCycleHigh;
-        return Utils::rgbToRgba(color, approachingEventBlinkCycleHigh ? 1 : min(currentCalendarBrightness, 0.5F));
+        return Utils::rgbToRgba(color, approachingEventBlinkCycleHigh ? 1 : min(brightness, 0.5F));
     }
 
-    return Utils::rgbToRgba(color, currentCalendarBrightness);
+    return Utils::rgbToRgba(color, brightness);
 }
 
 void Calendar::checkIfEventIsApproaching() {
@@ -174,7 +173,7 @@ void Calendar::showLoading() {
     }
 
     lastLoadingUpdateTime = millis();
-    uint32_t color = Utils::rgbToRgba(loadingColor, currentCalendarBrightness);
+    uint32_t color = Utils::rgbToRgba(loadingColor, 0.3F);
 
     for (int i = 0; i < LED_STRIP_LENGTH; i++) {
         if (i >= loadingCurrentPosition - loadingLength && i < loadingCurrentPosition) {

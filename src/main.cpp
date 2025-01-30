@@ -45,9 +45,8 @@ void loop() {
 
     uint16_t brightness = Brightness::get();
 
-    Clock::showHours(brightness);
-    Clock::showMinutes(brightness);
-
+    Clock::showTime(brightness);
+    
     Calendar::checkIfEventIsApproaching();
     Calendar::showEvents(brightness);
 

@@ -12,14 +12,13 @@ class Clock {
 
     static void init(uint16_t brightness);
 
-    static void showHours(uint16_t brightness);
-
-    static void showMinutes(uint16_t brightness);
+    static void showTime(uint16_t brightness);
 
     static float getHoursBrightness(uint16_t brightness);
    private:
-    static void reset();
+    static void showHours();
 
+    static void showMinutes();
 
     static float getMinutesBrightness(uint16_t brightness);
 };

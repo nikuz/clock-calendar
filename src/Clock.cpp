@@ -23,11 +23,8 @@ const uint32_t nightHourBorderColor = Adafruit_NeoPixel::Color(255, 0, 0);
 const uint32_t currentMinuteColor = Adafruit_NeoPixel::Color(0, 255, 0);
 const uint32_t nightCurrentMinuteColor = Adafruit_NeoPixel::Color(255, 255, 0);
 int currentHour = -1;
-uint16_t currentHourRawBrightness = 0;
-float currentHourBrightness = 0;
 int currentMinute = -1;
-uint16_t currentMinuteRawBrightness = 0;
-float currentMinuteBrightness = 0;
+uint16_t currentClockBrightness = 0;
 
 const bool hoursMapping[24][hoursStripsAmount][LEDS_PER_HOUR] = {
     // 0
@@ -205,11 +202,7 @@ Clock::Clock() {}
 Clock::~Clock() {}
 
 void Clock::init(uint16_t brightness) {
-    currentHourRawBrightness = brightness;
-    currentHourBrightness = getHoursBrightness(brightness);
-
-    currentMinuteRawBrightness = brightness;
-    currentMinuteBrightness = getMinutesBrightness(brightness);
+    currentClockBrightness = brightness;
 
     for (int i = 0; i < hoursStripsAmount; i++) {
         hoursLeds[i].begin();
@@ -220,32 +213,12 @@ void Clock::init(uint16_t brightness) {
     Utils::clearLeds(&minutesLeds, LED_STRIP_LENGTH);
 }
 
-void Clock::reset() {
-    for (int i = 0; i < hoursStripsAmount; i++) {
-        Utils::clearLeds(&hoursLeds[i], LED_STRIP_LENGTH);
-    }
+void Clock::showHours() {
+    float brightness = getHoursBrightness(currentClockBrightness);
+    bool isNight = Brightness::isNight(currentClockBrightness);
+    uint32_t nightColor = Utils::rgbToRgba(nightHourColor, brightness);
+    uint32_t regularColor = Utils::rgbToRgba(hourColor, brightness);
 
-    Utils::clearLeds(&minutesLeds, LED_STRIP_LENGTH);
-}
-
-void Clock::showHours(uint16_t brightness) {
-    struct tm timeinfo;
-    if (!getLocalTime(&timeinfo)) {
-        Serial.println("Failed to obtain time");
-        return;
-    }
-
-    if (currentHour != -1 && currentHour == timeinfo.tm_hour && abs(brightness - currentHourRawBrightness) < CHANGE_BRIGHTNESS_THRESHOLD) {
-        return;
-    }
-
-    currentHour = timeinfo.tm_hour;
-    currentHourRawBrightness = brightness;
-    currentHourBrightness = getHoursBrightness(brightness);
-    bool isNight = Brightness::isNight(brightness);
-    uint32_t nightColor = Utils::rgbToRgba(nightHourColor, currentHourBrightness);
-    uint32_t regularColor = Utils::rgbToRgba(hourColor, currentHourBrightness);
-    
     for (int i = 0; i < hoursStripsAmount; i++) {
         for (int j = 0; j < LED_STRIP_LENGTH; j++) {
             if (j >= currentHour * LEDS_PER_HOUR && j < currentHour * LEDS_PER_HOUR + LEDS_PER_HOUR) {
@@ -266,26 +239,14 @@ void Clock::showHours(uint16_t brightness) {
     }
 }
 
-void Clock::showMinutes(uint16_t brightness) {
-    struct tm timeinfo;
-    if (!getLocalTime(&timeinfo)) {
-        Serial.println("Failed to obtain time");
-        return;
-    }
-
-    if (currentMinute != -1 && currentMinute == timeinfo.tm_min && abs(brightness - currentMinuteRawBrightness) < CHANGE_BRIGHTNESS_THRESHOLD) {
-        return;
-    }
-
-    currentMinute = timeinfo.tm_min;
-    currentMinuteRawBrightness = brightness;
-    currentMinuteBrightness = getMinutesBrightness(brightness);
-    bool isNight = Brightness::isNight(brightness);
-    uint32_t nightBorderColor = Utils::rgbToRgba(nightHourBorderColor, currentMinuteBrightness);
-    uint32_t regularBorderColor = Utils::rgbToRgba(hourBorderColor, currentMinuteBrightness);
+void Clock::showMinutes() {
+    float brightness = getMinutesBrightness(currentClockBrightness);
+    bool isNight = Brightness::isNight(currentClockBrightness);
+    uint32_t nightBorderColor = Utils::rgbToRgba(nightHourBorderColor, brightness);
+    uint32_t regularBorderColor = Utils::rgbToRgba(hourBorderColor, brightness);
 
     for (int i = 0; i < LED_STRIP_LENGTH; i++) {
-        if (i >= timeinfo.tm_hour * LEDS_PER_HOUR && i < timeinfo.tm_hour * LEDS_PER_HOUR + LEDS_PER_HOUR) {
+        if (i >= currentHour * LEDS_PER_HOUR && i < currentHour * LEDS_PER_HOUR + LEDS_PER_HOUR) {
             if (isNight) {
                 minutesLeds.setPixelColor(i, nightBorderColor);
             } else {
@@ -300,9 +261,32 @@ void Clock::showMinutes(uint16_t brightness) {
     if (isNight) {
         minuteColor = nightCurrentMinuteColor;
     }
-    minutesLeds.setPixelColor(timeinfo.tm_hour * LEDS_PER_HOUR + currentMinute / 10, Utils::rgbToRgba(minuteColor, currentMinuteBrightness));
+    minutesLeds.setPixelColor(currentHour * LEDS_PER_HOUR + currentMinute / 10, Utils::rgbToRgba(minuteColor, brightness));
 
     minutesLeds.show();
+}
+
+void Clock::showTime(uint16_t brightness) {
+    struct tm timeinfo;
+    if (!getLocalTime(&timeinfo)) {
+        Serial.println("Failed to obtain time");
+        return;
+    }
+
+    
+    bool noBrightnessChanged = (brightness == MIN_BRIGHTNESS && currentClockBrightness == brightness) ||
+                               (brightness > MIN_BRIGHTNESS && abs(brightness - currentClockBrightness) < CHANGE_BRIGHTNESS_THRESHOLD);
+
+    if (currentHour == timeinfo.tm_hour && currentMinute == timeinfo.tm_min && noBrightnessChanged) {
+        return;
+    }
+
+    currentHour = timeinfo.tm_hour;
+    currentMinute = timeinfo.tm_min;
+    currentClockBrightness = brightness;
+
+    showHours();
+    showMinutes();
 }
 
 float Clock::getHoursBrightness(uint16_t brightness) { return max(brightness / 100.0F / 2.0F, 0.01F); }

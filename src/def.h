@@ -17,6 +17,6 @@
 #define LIGHT_SENSOR_PIN                    39
 #define MIN_BRIGHTNESS                      1
 #define MAX_BRIGHTNESS                      100
-#define CHANGE_BRIGHTNESS_THRESHOLD         5
+#define CHANGE_BRIGHTNESS_THRESHOLD         2
 
 #define OFF_COLOR                           Adafruit_NeoPixel::Color(0, 0, 0)
