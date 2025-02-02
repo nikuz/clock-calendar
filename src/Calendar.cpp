@@ -82,14 +82,13 @@ void Calendar::showEvents(uint16_t brightness) {
         return;
     }
 
-    bool noEvents = todaysEvents.size() == 0;
     bool noBrightnessChanged = (brightness == MIN_BRIGHTNESS && currentCalendarBrightness == brightness) ||
                                (brightness > MIN_BRIGHTNESS && abs(brightness - currentCalendarBrightness) < CHANGE_BRIGHTNESS_THRESHOLD);
     bool noEventApproaching = approachingEventIndex == -1;
     bool eventApproachingBlinkDelay = approachingEventIndex != -1 && millis() - approachingEventBlinkCycleChangeTime < approachingEventBlinkInterval;
     bool noEventApproachingBlinkStale = approachingEventIndex == -1 && !approachingEventBlinkCycleHigh;
 
-    if (noEvents || eventApproachingBlinkDelay || (eventsRendered && noBrightnessChanged && noEventApproaching && noEventApproachingBlinkStale)) {
+    if (eventApproachingBlinkDelay || (eventsRendered && noBrightnessChanged && noEventApproaching && noEventApproachingBlinkStale)) {
         return;
     }
 
@@ -103,10 +102,15 @@ void Calendar::showEvents(uint16_t brightness) {
         approachingEventBlinkCycleHigh = false;
     }
 
-    int eventIndex = 0;
-    CalendarEvent event = todaysEvents[eventIndex];
-    uint32_t eventColor = getEventColor(eventIndex, timeinfo.tm_sec, currentBrightness);
     bool isNight = Brightness::isNight(brightness);
+    int eventIndex = 0;
+    CalendarEvent event;
+    uint32_t eventColor;
+
+    if (eventIndex < todaysEvents.size()) {
+        event = todaysEvents[eventIndex];
+        eventColor = getEventColor(eventIndex, timeinfo.tm_sec, currentBrightness);
+    }
 
     for (int i = 0; i < LED_STRIP_LENGTH; i++) {
         if (isNight) {
