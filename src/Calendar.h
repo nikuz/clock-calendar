@@ -32,7 +32,7 @@ class Calendar {
     static void checkIfEventIsApproaching();
 
    private:
-    static uint16_t getEventColor(int eventIndex, int currentSecond, float brightness);
+    static uint32_t getEventColor(int eventIndex, int currentSecond, float brightness);
 
     static void showLoading();
 

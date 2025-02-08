@@ -43,24 +43,24 @@ const int calendarEventColorsAmount = 20;
 uint32_t calendarEventColors[calendarEventColorsAmount] = {
     calendarLeds.Color(0, 255, 255),    // Cyan
     calendarLeds.Color(255, 0, 255),    // Magenta
-    calendarLeds.Color(255, 255, 0),    // Yellow
     calendarLeds.Color(255, 165, 0),    // Orange
-    calendarLeds.Color(128, 0, 128),    // Purple
-    calendarLeds.Color(255, 192, 203),  // Pink
+    calendarLeds.Color(128, 0, 0),      // Maroon
+    calendarLeds.Color(135, 206, 235),  // Sky Blue
     calendarLeds.Color(139, 69, 19),    // Brown
     calendarLeds.Color(50, 205, 50),    // Lime
-    calendarLeds.Color(0, 128, 128),    // Teal
-    calendarLeds.Color(0, 0, 128),      // Navy
-    calendarLeds.Color(128, 0, 0),      // Maroon
-    calendarLeds.Color(128, 128, 0),    // Olive
     calendarLeds.Color(255, 215, 0),    // Gold
     calendarLeds.Color(64, 224, 208),   // Turquoise
-    calendarLeds.Color(230, 230, 250),  // Lavender
-    calendarLeds.Color(135, 206, 235),  // Sky Blue
+    calendarLeds.Color(255, 192, 203),  // Pink
     calendarLeds.Color(220, 20, 60),    // Crimson
+    calendarLeds.Color(230, 230, 250),  // Lavender
+    calendarLeds.Color(128, 128, 0),    // Olive
     calendarLeds.Color(255, 0, 0),      // Red
     calendarLeds.Color(0, 255, 0),      // Green
     calendarLeds.Color(0, 0, 255),      // Blue
+    calendarLeds.Color(255, 255, 0),    // Yellow
+    calendarLeds.Color(128, 0, 128),    // Purple
+    calendarLeds.Color(0, 128, 128),    // Teal
+    calendarLeds.Color(0, 0, 128),      // Navy
 };
 
 Calendar::Calendar() {}
@@ -135,9 +135,9 @@ void Calendar::showEvents(uint16_t brightness) {
     calendarLeds.show();
 }
 
-uint16_t Calendar::getEventColor(int eventIndex, int currentSecond, float brightness) {
+uint32_t Calendar::getEventColor(int eventIndex, int currentSecond, float brightness) {
     CalendarEvent event = todaysEvents[eventIndex];
-    uint16_t color = event.color;
+    uint32_t color = event.color;
 
     if (approachingEventIndex == eventIndex && currentSecond < 59) {
         approachingEventBlinkCycleHigh = !approachingEventBlinkCycleHigh;
@@ -253,9 +253,7 @@ void Calendar::retrieveEvents() {
                     if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
                         String payload = https.getString();
                         std::vector<CalendarEvent> events;
-                        char today[9];  // YYYYMMDD + null terminator
-                        sprintf(today, "%04d%02d%02d", timeinfo.tm_year + 1900, timeinfo.tm_mon + 1, timeinfo.tm_mday);
-
+                        
                         int pos = 0;
                         int colorIndex = 0;
 
@@ -280,18 +278,15 @@ void Calendar::retrieveEvents() {
 
                             String dtStart = vevent.substring(startIdx + 8, vevent.indexOf("\n", startIdx));
                             dtStart.trim();
+                            struct tm startTime = Utils::convertToLocalTime(Utils::parseDateTime(dtStart));
 
                             // Check if the event is for today
-                            if (dtStart.startsWith(today)) {
+                            if (startTime.tm_year == timeinfo.tm_year && startTime.tm_mon == timeinfo.tm_mon &&
+                                startTime.tm_mday == timeinfo.tm_mday) {
                                 String summary = vevent.substring(summaryIdx + 8, vevent.indexOf("\n", summaryIdx));
                                 summary.trim();
                                 summary.toLowerCase();
 
-                                if (summary == "busy") {
-                                    continue;
-                                }
-
-                                struct tm startTime = Utils::convertToLocalTime(Utils::parseDateTime(dtStart));
                                 int startLedIndex = startTime.tm_hour * LEDS_PER_HOUR + startTime.tm_min / 10;
 
                                 String dtEnd = vevent.substring(endIdx + 6, vevent.indexOf("\n", endIdx));
