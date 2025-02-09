@@ -242,26 +242,20 @@ void Clock::showHours() {
 void Clock::showMinutes() {
     float brightness = getMinutesBrightness(currentClockBrightness);
     bool isNight = Brightness::isNight(currentClockBrightness);
-    uint32_t nightBorderColor = Utils::rgbToRgba(nightHourBorderColor, brightness);
-    uint32_t regularBorderColor = Utils::rgbToRgba(hourBorderColor, brightness);
+    uint32_t activeHourBorderColor = isNight ? Utils::rgbToRgba(nightHourBorderColor, brightness) : Utils::rgbToRgba(hourBorderColor, brightness);
+    uint32_t activeMinutesColor = isNight ? Utils::rgbToRgba(nightCurrentMinuteColor, brightness) : Utils::rgbToRgba(currentMinuteColor, brightness);
 
     for (int i = 0; i < LED_STRIP_LENGTH; i++) {
         if (i >= currentHour * LEDS_PER_HOUR && i < currentHour * LEDS_PER_HOUR + LEDS_PER_HOUR) {
-            if (isNight) {
-                minutesLeds.setPixelColor(i, nightBorderColor);
+            if (i <= currentHour * LEDS_PER_HOUR + currentMinute / 10) {
+                minutesLeds.setPixelColor(i, activeMinutesColor);
             } else {
-                minutesLeds.setPixelColor(i, regularBorderColor);
+                minutesLeds.setPixelColor(i, activeHourBorderColor);
             }
         } else {
             minutesLeds.setPixelColor(i, OFF_COLOR);
         }
     }
-
-    uint32_t minuteColor = currentMinuteColor;
-    if (isNight) {
-        minuteColor = nightCurrentMinuteColor;
-    }
-    minutesLeds.setPixelColor(currentHour * LEDS_PER_HOUR + currentMinute / 10, Utils::rgbToRgba(minuteColor, brightness));
 
     minutesLeds.show();
 }
