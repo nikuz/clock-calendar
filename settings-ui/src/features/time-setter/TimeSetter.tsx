@@ -1,22 +1,20 @@
 import { JSX } from 'solid-js';
-import { SettingsStateContext, SettingsStateEvents } from '../../state/types';
+import { settingsMachineActor, useSettingsStateSelect } from '../../state';
 import './style.css';
 
-interface Props {
-    settingsContext: SettingsStateContext,
-    settingsSend: (event: SettingsStateEvents) => void,
-}
+export default function TimeSetter() {
+    const hour = useSettingsStateSelect('hour');
+    const minute = useSettingsStateSelect('minute');
 
-export default function TimeSetter(props: Props) {
     const setHourHandler: JSX.EventHandler<HTMLInputElement, InputEvent> = (event) => {
-        props.settingsSend({
+        settingsMachineActor.send({
             type: 'SET_HOUR',
             hour: Number(event.currentTarget.value),
         });
     };
     
     const setMinuteHandler: JSX.EventHandler<HTMLInputElement, InputEvent> = (event) => {
-        props.settingsSend({
+        settingsMachineActor.send({
             type: 'SET_MINUTE',
             minute: Number(event.currentTarget.value),
         });
@@ -30,11 +28,11 @@ export default function TimeSetter(props: Props) {
                     type="range"
                     min={0}
                     max={23}
-                    value={props.settingsContext.hour}
+                    value={hour()}
                     class="slider"
                     onInput={setHourHandler}
                 />
-                <div class="time-setter-value">{props.settingsContext.hour}</div>
+                <div class="time-setter-value">{hour()}</div>
             </div>
 
             <div class="time-setter-item">
@@ -43,11 +41,11 @@ export default function TimeSetter(props: Props) {
                     type="range"
                     min={0}
                     max={59}
-                    value={props.settingsContext.minute}
+                    value={minute()}
                     class="slider"
                     onInput={setMinuteHandler}
                 />
-                <div class="time-setter-value">{props.settingsContext.minute}</div>
+                <div class="time-setter-value">{minute()}</div>
             </div>
         </div>
     );

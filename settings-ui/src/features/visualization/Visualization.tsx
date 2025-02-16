@@ -1,5 +1,5 @@
 import { createSignal, createEffect, onMount, onCleanup } from 'solid-js';
-import { SettingsStateContext, SettingsStateEvents } from '../../state/types';
+import { useSettingsStateSelect } from '../../state';
 import {
     getDevicePixelRatio,
     clearCanvas,
@@ -10,12 +10,8 @@ import { FONT_URL } from './constants';
 import { Size } from './types';
 import './style.css';
 
-interface Props {
-    settingsContext: SettingsStateContext,
-    settingsSend: (event: SettingsStateEvents) => void,
-}
-
-export default function Visualization(props: Props) {
+export default function Visualization() {
+    const hour = useSettingsStateSelect('hour');
     const [canvasSize, setCanvasSize] = createSignal<Size>({ width: 0, height: 0 });
     let canvasEl: HTMLCanvasElement | undefined;;
     let resizeObserver: ResizeObserver | undefined;
@@ -44,7 +40,7 @@ export default function Visualization(props: Props) {
         drawHours({
             canvasEl,
             canvasSize: canvasSize(),
-            activeHour: props.settingsContext.hour,
+            activeHour: hour(),
         });
     };
 

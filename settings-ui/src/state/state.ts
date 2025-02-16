@@ -1,4 +1,4 @@
-import { setup, assign } from 'xstate';
+import { setup, assign, createActor } from 'xstate';
 import { SettingsStateContext, SettingsStateEvents } from './types';
 
 export const settingsMachine = setup({
@@ -23,3 +23,5 @@ export const settingsMachine = setup({
         },
     },
 });
+
+export const settingsMachineActor = createActor(settingsMachine).start();
