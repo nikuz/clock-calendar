@@ -1,0 +1,20 @@
+.time-setter-container {
+    display: flex;
+    justify-content: center;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.time-setter-item {
+    display: flex;
+    align-items: center;
+    margin: 0 50px;
+}
+
+.time-setter-label {
+    margin-right: 15px;
+}
+.time-setter-value {
+    width: 50px;
+    text-align: center;
+}
