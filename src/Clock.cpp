@@ -18,10 +18,8 @@ Adafruit_NeoPixel hoursLeds[hoursStripsAmount] = {
 Adafruit_NeoPixel minutesLeds = Adafruit_NeoPixel(LED_STRIP_LENGTH, MINUTES_LED_PIN, NEO_GRB + NEO_KHZ800);
 const uint32_t hourColor = Adafruit_NeoPixel::Color(246, 231, 210);
 const uint32_t nightHourColor = Adafruit_NeoPixel::Color(255, 0, 0);
-const uint32_t hourBorderColor = Adafruit_NeoPixel::Color(255, 255, 255);
-const uint32_t nightHourBorderColor = Adafruit_NeoPixel::Color(255, 0, 0);
 const uint32_t currentMinuteColor = Adafruit_NeoPixel::Color(0, 255, 0);
-const uint32_t nightCurrentMinuteColor = Adafruit_NeoPixel::Color(255, 255, 0);
+const uint32_t nightCurrentMinuteColor = Adafruit_NeoPixel::Color(255, 0, 0);
 int currentHour = -1;
 int currentMinute = -1;
 uint16_t currentClockBrightness = 0;
@@ -242,16 +240,11 @@ void Clock::showHours() {
 void Clock::showMinutes() {
     float brightness = getMinutesBrightness(currentClockBrightness);
     bool isNight = Brightness::isNight(currentClockBrightness);
-    uint32_t activeHourBorderColor = isNight ? Utils::rgbToRgba(nightHourBorderColor, brightness) : Utils::rgbToRgba(hourBorderColor, brightness);
     uint32_t activeMinutesColor = isNight ? Utils::rgbToRgba(nightCurrentMinuteColor, brightness) : Utils::rgbToRgba(currentMinuteColor, brightness);
 
     for (int i = 0; i < LED_STRIP_LENGTH; i++) {
-        if (i >= currentHour * LEDS_PER_HOUR && i < currentHour * LEDS_PER_HOUR + LEDS_PER_HOUR) {
-            if (i <= currentHour * LEDS_PER_HOUR + currentMinute / 10) {
-                minutesLeds.setPixelColor(i, activeMinutesColor);
-            } else {
-                minutesLeds.setPixelColor(i, activeHourBorderColor);
-            }
+        if (i >= currentHour * LEDS_PER_HOUR && i <= currentHour * LEDS_PER_HOUR + currentMinute / 10) {
+            minutesLeds.setPixelColor(i, activeMinutesColor);
         } else {
             minutesLeds.setPixelColor(i, OFF_COLOR);
         }

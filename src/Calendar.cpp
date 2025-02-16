@@ -283,9 +283,19 @@ void Calendar::retrieveEvents() {
                             // Check if the event is for today
                             if (startTime.tm_year == timeinfo.tm_year && startTime.tm_mon == timeinfo.tm_mon &&
                                 startTime.tm_mday == timeinfo.tm_mday) {
+                                uint32_t color = calendarEventColors[colorIndex];
                                 String summary = vevent.substring(summaryIdx + 8, vevent.indexOf("\n", summaryIdx));
                                 summary.trim();
                                 summary.toLowerCase();
+
+                                if (summary == "busy") {
+                                    color = Adafruit_NeoPixel::Color(128, 128, 128);
+                                } else {
+                                    colorIndex++;
+                                    if (colorIndex == calendarEventColorsAmount - 1) {
+                                        colorIndex = 0;
+                                    }
+                                }
 
                                 int startLedIndex = startTime.tm_hour * LEDS_PER_HOUR + startTime.tm_min / 10;
 
@@ -304,13 +314,8 @@ void Calendar::retrieveEvents() {
                                     summary,
                                     startLedIndex,
                                     endLedIndex,
-                                    color : calendarEventColors[colorIndex],
+                                    color,
                                 });
-
-                                colorIndex++;
-                                if (colorIndex == calendarEventColorsAmount - 1) {
-                                    colorIndex = 0;
-                                }
                             }
                         }
 
