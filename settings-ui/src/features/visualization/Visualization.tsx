@@ -10,6 +10,7 @@ import {
     drawMinutes,
     drawCalendar,
     drawHolders,
+    // drawDiffuser,
 } from './utils';
 import { Size } from './types';
 import './style.css';
@@ -63,6 +64,10 @@ export default function Visualization() {
             canvasSize: canvasSize(),
             image: holderImageEl,
         });
+        // drawDiffuser({
+        //     canvasEl,
+        //     canvasSize: canvasSize(),
+        // });
     };
 
     createEffect(() => {

@@ -6,3 +6,4 @@ export * from './draw-hours';
 export * from './draw-minutes';
 export * from './draw-calendar';
 export * from './draw-holders';
+export * from './draw-diffuser';
