@@ -7,4 +7,4 @@ export const HOUR_BOX_SEPARATOR_COLOR = '#D9D9D9';
 export const HOUR_DIGIT_FONT_SIZE_RATIO = 1;
 export const HOUR_DIGIT_DEFAULT_COLOR = '#F0F0F0';
 export const HOUR_DIGIT_DEFAULT_ACTIVE_COLOR = '#FF0000';
-export const FONT_URL = '/Rubik-font.woff2';
+export const FONT_URL = './Rubik-font.woff2';
