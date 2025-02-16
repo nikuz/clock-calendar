@@ -1,5 +1,6 @@
 /* eslint-disable solid/reactivity */
 import {
+    HOUR_AMOUNT,
     HOUR_BOX_WIDTH,
     HOUR_BOX_HEIGHT_WIDTH_RATIO,
     HOUR_BOX_COLOR,
@@ -7,6 +8,7 @@ import {
     HOUR_DIGIT_FONT_SIZE_RATIO,
     HOUR_DIGIT_DEFAULT_COLOR,
     HOUR_DIGIT_DEFAULT_ACTIVE_COLOR,
+    LED_STRIP_HOUR_BOX_HEIGHT_RATIO,
 } from 'src/constants';
 import { Size } from '../types';
 import { remapValue } from './remap-value';
@@ -29,8 +31,9 @@ export function drawHours(props: {
         outMax: props.canvasSize.width,
     });
     const hourHeight = hourWidth * HOUR_BOX_HEIGHT_WIDTH_RATIO;
-    const hoursAmount = 24;
-    const totalHoursWidth = hourWidth * hoursAmount;
+    const ledStripHeight = hourHeight * LED_STRIP_HOUR_BOX_HEIGHT_RATIO;
+    const y = props.canvasSize.height / 2 - hourHeight / 2 - ledStripHeight * 2;
+    const totalHoursWidth = hourWidth * HOUR_AMOUNT;
 
     const fontSize = hourWidth * HOUR_DIGIT_FONT_SIZE_RATIO;
     const textMarginY = remapValue({
@@ -41,9 +44,8 @@ export function drawHours(props: {
         outMax: fontSize,
     });
 
-    for (let i = 0; i < hoursAmount; i++) {
+    for (let i = 0; i < HOUR_AMOUNT; i++) {
         const x = props.canvasSize.width / 2 - totalHoursWidth / 2 + hourWidth * i;
-        const y = props.canvasSize.height / 2 - hourHeight / 2;
 
         ctx.fillStyle = HOUR_BOX_COLOR;
         ctx.fillRect(x, y, hourWidth, hourHeight);

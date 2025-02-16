@@ -1,18 +1,20 @@
 import { createSignal, createEffect, onMount, onCleanup } from 'solid-js';
 import { useSettingsStateSelect } from 'src/state';
-import { FONT_URL } from 'src/constants';
+import { HOUR_FONT_URL } from 'src/constants';
 import {
     getDevicePixelRatio,
     clearCanvas,
     scaleCanvas,
     drawBackground,
     drawHours,
+    drawMinutes,
 } from './utils';
 import { Size } from './types';
 import './style.css';
 
 export default function Visualization() {
     const hour = useSettingsStateSelect('hour');
+    const minute = useSettingsStateSelect('minute');
     const [canvasSize, setCanvasSize] = createSignal<Size>({ width: 0, height: 0 });
     let canvasEl: HTMLCanvasElement | undefined;;
     let resizeObserver: ResizeObserver | undefined;
@@ -43,6 +45,12 @@ export default function Visualization() {
             canvasSize: canvasSize(),
             activeHour: hour(),
         });
+        drawMinutes({
+            canvasEl,
+            canvasSize: canvasSize(),
+            activeHour: hour(),
+            activeMinute: minute(),
+        });
     };
 
     createEffect(() => {
@@ -57,7 +65,7 @@ export default function Visualization() {
     });
     
     createEffect(() => {
-        const font = new FontFace('Rubik', `url(${FONT_URL})`);
+        const font = new FontFace('Rubik', `url(${HOUR_FONT_URL})`);
         font.load().then(drawHandler);
     });
 
