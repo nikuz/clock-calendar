@@ -1,7 +1,8 @@
-import { defineConfig } from 'vite'
-import solid from 'vite-plugin-solid'
+import { defineConfig } from 'vite';
+import solid from 'vite-plugin-solid';
+import packageSettings from './package.json';
 
 export default defineConfig({
-  base: '',
+  base: `/${packageSettings.name}`,
   plugins: [solid()],
-})
+});

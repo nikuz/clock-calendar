@@ -2,7 +2,7 @@
   font-family: "Rubik";
   font-style: normal;
   font-weight: normal;
-  src: local("Rubik"), url(./Rubik-font.woff2) format("woff2");
+  src: local("Rubik"), url(/clock-calendar/Rubik-font.woff2) format("woff2");
 }
 
 html,
