@@ -2,3 +2,9 @@
     width: 100%;
     height: 25%;
 }
+
+#visualization-holder-image {
+    position: absolute;
+    left: -1000px;
+    top: -1000px;
+}

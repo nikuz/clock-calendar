@@ -1,6 +1,6 @@
 import { createSignal, createEffect, onMount, onCleanup } from 'solid-js';
 import { useSettingsStateSelect } from 'src/state';
-import { HOUR_FONT_URL } from 'src/constants';
+import { HOUR_FONT_URL, HOLDER_IMAGE_URL } from 'src/constants';
 import {
     getDevicePixelRatio,
     clearCanvas,
@@ -8,6 +8,8 @@ import {
     drawBackground,
     drawHours,
     drawMinutes,
+    drawCalendar,
+    drawHolders,
 } from './utils';
 import { Size } from './types';
 import './style.css';
@@ -17,6 +19,7 @@ export default function Visualization() {
     const minute = useSettingsStateSelect('minute');
     const [canvasSize, setCanvasSize] = createSignal<Size>({ width: 0, height: 0 });
     let canvasEl: HTMLCanvasElement | undefined;;
+    let holderImageEl: HTMLImageElement | undefined;;
     let resizeObserver: ResizeObserver | undefined;
 
     const resizeHandler = (entries: ResizeObserverEntry[]) => {
@@ -51,6 +54,15 @@ export default function Visualization() {
             activeHour: hour(),
             activeMinute: minute(),
         });
+        drawCalendar({
+            canvasEl,
+            canvasSize: canvasSize(),
+        });
+        drawHolders({
+            canvasEl,
+            canvasSize: canvasSize(),
+            image: holderImageEl,
+        });
     };
 
     createEffect(() => {
@@ -68,6 +80,12 @@ export default function Visualization() {
         const font = new FontFace('Rubik', `url(${HOUR_FONT_URL})`);
         font.load().then(drawHandler);
     });
+    
+    createEffect(() => {
+        const image = new Image();
+        image.src = HOLDER_IMAGE_URL;
+        image.onload = drawHandler;
+    });
 
     onMount(() => {
         resizeObserver = new ResizeObserver(resizeHandler);
@@ -82,12 +100,17 @@ export default function Visualization() {
         }
     });
 
-    return (
+    return <>
         <canvas
             ref={canvasEl}
             id="visualization-canvas"
             width={canvasSize().width}
             height={canvasSize().height}
         />
-    );
+        <img
+            ref={holderImageEl}
+            src={HOLDER_IMAGE_URL}
+            id="visualization-holder-image"
+        />
+    </>;
 }
