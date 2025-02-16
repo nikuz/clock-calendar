@@ -1,5 +1,5 @@
 import { JSX } from 'solid-js';
-import { settingsMachineActor, useSettingsStateSelect } from '../../state';
+import { settingsMachineActor, useSettingsStateSelect } from 'src/state';
 import './style.css';
 
 export default function TimeSetter() {

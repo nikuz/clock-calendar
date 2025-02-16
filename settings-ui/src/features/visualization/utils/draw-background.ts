@@ -1,4 +1,4 @@
-import { BACKGROUND_COLOR } from '../constants';
+import { BACKGROUND_COLOR } from 'src/constants';
 import { Size } from '../types';
 
 export function drawBackground(canvasEl: HTMLCanvasElement, canvasSize: Size) {

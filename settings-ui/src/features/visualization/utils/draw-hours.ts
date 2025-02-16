@@ -7,7 +7,7 @@ import {
     HOUR_DIGIT_FONT_SIZE_RATIO,
     HOUR_DIGIT_DEFAULT_COLOR,
     HOUR_DIGIT_DEFAULT_ACTIVE_COLOR,
-} from '../constants';
+} from 'src/constants';
 import { Size } from '../types';
 import { remapValue } from './remap-value';
 

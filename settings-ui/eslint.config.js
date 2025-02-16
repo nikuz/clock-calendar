@@ -39,6 +39,9 @@ export default [
                 project: './tsconfig.node.json',
                 tsconfigRootDir: import.meta.dirname,
             },
+            globals: {
+                __dirname: 'readonly',
+            }
         },
     }
 ];

@@ -1,27 +1,29 @@
-import { setup, assign, createActor } from 'xstate';
+import { createRoot } from 'solid-js';
+import { createStore } from 'solid-js/store';
 import { SettingsStateContext, SettingsStateEvents } from './types';
 
-export const settingsMachine = setup({
-    types: {
-        context: {} as SettingsStateContext,
-        events: {} as SettingsStateEvents,
-    }
-}).createMachine({
-    id: 'SETTINGS',
-
-    context: {
+const createSettingsMachine = () => {
+    const [context, setContext] = createStore<SettingsStateContext>({
         hour: 0,
         minute: 0,
-    },
+    });
 
-    on: {
-        SET_HOUR: {
-            actions: assign(({ event }) => ({ hour: event.hour })),
-        },
-        SET_MINUTE: {
-            actions: assign(({ event }) => ({ minute: event.minute })),
-        },
-    },
-});
+    const send = (event: SettingsStateEvents) => {
+        switch (event.type) {
+            case 'SET_HOUR':
+                setContext('hour', event.hour);
+                break;
+            
+            case 'SET_MINUTE':
+                setContext('minute', event.minute);
+                break;
+        }
+    };
 
-export const settingsMachineActor = createActor(settingsMachine).start();
+    return {
+        context,
+        send,
+    };
+};
+
+export const settingsMachineActor = createRoot(() => createSettingsMachine());

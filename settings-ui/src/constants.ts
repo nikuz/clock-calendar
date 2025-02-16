@@ -1,4 +1,4 @@
-import packageSettings from '../../../package.json';
+import packageSettings from '../package.json';
 
 // export const BACKGROUND_COLOR = '#D9D9D9';
 export const BACKGROUND_COLOR = '#F0F0F0';

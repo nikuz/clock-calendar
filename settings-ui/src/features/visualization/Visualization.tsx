@@ -1,12 +1,13 @@
 import { createSignal, createEffect, onMount, onCleanup } from 'solid-js';
-import { useSettingsStateSelect } from '../../state';
+import { useSettingsStateSelect } from 'src/state';
+import { FONT_URL } from 'src/constants';
 import {
     getDevicePixelRatio,
     clearCanvas,
     scaleCanvas,
+    drawBackground,
     drawHours,
 } from './utils';
-import { FONT_URL } from './constants';
 import { Size } from './types';
 import './style.css';
 
@@ -36,7 +37,7 @@ export default function Visualization() {
 
         clearCanvas(canvasEl);
 
-        // drawBackground(canvasEl, canvasSize());
+        drawBackground(canvasEl, canvasSize());
         drawHours({
             canvasEl,
             canvasSize: canvasSize(),
