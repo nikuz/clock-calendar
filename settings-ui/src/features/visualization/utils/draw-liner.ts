@@ -4,12 +4,12 @@ import {
     HOUR_AMOUNT,
     HOUR_BOX_HEIGHT_WIDTH_RATIO,
     LED_STRIP_HOUR_BOX_HEIGHT_RATIO,
-    DIFFUSER_COLOR,
+    LINER_COLOR,
 } from 'src/constants';
 import { Size } from '../types';
 import { remapValue } from './remap-value';
 
-export function drawDiffuser(props: {
+export function drawLiner(props: {
     canvasEl: HTMLCanvasElement,
     canvasSize: Size,
 }) {
@@ -29,13 +29,11 @@ export function drawDiffuser(props: {
     const ledStripHeight = hourHeight * LED_STRIP_HOUR_BOX_HEIGHT_RATIO;
 
     const totalHoursWidth = hourWidth * HOUR_AMOUNT;
-    const x = props.canvasSize.width / 2 - totalHoursWidth / 2;
-    const y = props.canvasSize.height / 2 + hourHeight / 2 - ledStripHeight * 2 - ledStripHeight / 10;
-    const width = props.canvasSize.width / 2 + totalHoursWidth / 2 - x;
+    const x = props.canvasSize.width / 2 - totalHoursWidth / 2 - hourWidth / 10;
+    const y = props.canvasSize.height / 2 - hourHeight / 2 - ledStripHeight * 2;
+    const width = props.canvasSize.width / 2 + totalHoursWidth / 2 - x + hourWidth / 10;
+    const height = hourHeight + ledStripHeight * 2 - ledStripHeight / 6;
 
-    ctx.save();
-    ctx.filter = 'blur(5px)';
-    ctx.fillStyle = DIFFUSER_COLOR;
-    ctx.fillRect(x, y, width, ledStripHeight * 2);
-    ctx.restore();
+    ctx.fillStyle = LINER_COLOR;
+    ctx.fillRect(x, y, width, height);
 }

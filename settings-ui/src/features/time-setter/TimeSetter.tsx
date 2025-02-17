@@ -29,7 +29,7 @@ export default function TimeSetter() {
                     min={0}
                     max={23}
                     value={hour()}
-                    class="slider"
+                    class="time-setter-slider"
                     onInput={setHourHandler}
                 />
                 <div class="time-setter-value">{hour()}</div>
@@ -42,7 +42,7 @@ export default function TimeSetter() {
                     min={0}
                     max={59}
                     value={minute()}
-                    class="slider"
+                    class="time-setter-slider"
                     onInput={setMinuteHandler}
                 />
                 <div class="time-setter-value">{minute()}</div>

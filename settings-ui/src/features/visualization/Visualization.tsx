@@ -10,7 +10,7 @@ import {
     drawMinutes,
     drawCalendar,
     drawHolders,
-    // drawDiffuser,
+    drawLiner,
 } from './utils';
 import { Size } from './types';
 import './style.css';
@@ -44,6 +44,10 @@ export default function Visualization() {
         clearCanvas(canvasEl);
 
         drawBackground(canvasEl, canvasSize());
+        drawLiner({
+            canvasEl,
+            canvasSize: canvasSize(),
+        });
         drawHours({
             canvasEl,
             canvasSize: canvasSize(),
@@ -64,10 +68,6 @@ export default function Visualization() {
             canvasSize: canvasSize(),
             image: holderImageEl,
         });
-        // drawDiffuser({
-        //     canvasEl,
-        //     canvasSize: canvasSize(),
-        // });
     };
 
     createEffect(() => {

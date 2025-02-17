@@ -1,14 +1,16 @@
 .time-setter-container {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     max-width: 1000px;
-    margin: 25px auto;
+    margin: 5px auto;
+    color: #FFF;
 }
 
 .time-setter-item {
     display: flex;
     align-items: center;
-    margin: 0 50px;
+    margin: 20px 50px;
 }
 
 .time-setter-label {
@@ -17,4 +19,33 @@
 .time-setter-value {
     width: 50px;
     text-align: center;
+}
+
+.time-setter-slider[type='range'] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 10px;
+    background: #ddd;
+    border-radius: 5px;
+    outline: none;
+}
+
+.time-setter-slider[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #007bff;
+    border-radius: 50%;
+    border: 1px solid #FFF;
+    cursor: pointer;
+}
+
+.time-setter-slider[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: #007bff;
+    border-radius: 50%;
+    cursor: pointer;
 }
