@@ -1,5 +1,6 @@
 import { JSX } from 'solid-js';
 import { settingsMachineActor, useSettingsStateSelect } from 'src/state';
+import { Slider } from 'src/components';
 import './style.css';
 
 export default function TimeSetter() {
@@ -21,34 +22,23 @@ export default function TimeSetter() {
     };
 
     return (
-        <div>
-            <h2 class="time-setter-title">Time</h2>
+        <div class="time-setter-container">
+            <h2>Time</h2>
 
-            <div class="time-setter-item">
-                <div class="time-setter-label">Hour:</div>
-                <input
-                    type="range"
-                    min={0}
-                    max={23}
-                    value={hour()}
-                    class="time-setter-slider"
-                    onInput={setHourHandler}
-                />
-                <div class="time-setter-value">{hour()}</div>
-            </div>
-
-            <div class="time-setter-item">
-                <div class="time-setter-label">Minute:</div>
-                <input
-                    type="range"
-                    min={0}
-                    max={59}
-                    value={minute()}
-                    class="time-setter-slider"
-                    onInput={setMinuteHandler}
-                />
-                <div class="time-setter-value">{minute()}</div>
-            </div>
+            <Slider
+                label="Hour:"
+                value={hour()}
+                min={0}
+                max={23}
+                onInput={setHourHandler}
+            />
+            <Slider
+                label="Minute:"
+                value={minute()}
+                min={0}
+                max={59}
+                onInput={setMinuteHandler}
+            />
         </div>
     );
 }

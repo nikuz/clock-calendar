@@ -1,0 +1,10 @@
+.brightness-setter-container {
+    text-align: center;
+}
+
+.room-brightness-slider {
+    display: inline-flex;
+    min-width: 50%;
+    justify-content: center;
+    margin-bottom: 100px;
+}

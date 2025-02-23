@@ -3,8 +3,11 @@ import { CalendarEvent } from 'src/types';
 export interface SettingsStateContext {
     hour: number,
     minute: number,
+
     events: CalendarEvent[],
     activeEvent?: number,
+
+    brightness: number,
 }
 
 export interface SetHourEvent {
@@ -29,9 +32,15 @@ export interface SetActiveEventEvent {
 
 export interface ClearActiveEventEvent { type: 'CLEAR_ACTIVE_EVENT' }
 
+export interface SetBrightnessEvent {
+    type: 'SET_BRIGHTNESS',
+    hour: number,
+}
+
 export type SettingsStateEvents =
     | SetHourEvent
     | SetMinuteEvent
     | SetEventsEvent
     | SetActiveEventEvent
-    | ClearActiveEventEvent;
+    | ClearActiveEventEvent
+    | SetBrightnessEvent;

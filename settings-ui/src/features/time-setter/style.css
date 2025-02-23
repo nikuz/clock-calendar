@@ -1,5 +1,6 @@
-.time-setter-title {
-    text-align: center;
+.time-setter-container {
+    min-width: 50%;
+    margin: 0 auto;
 }
 
 .time-setter-item {
@@ -47,9 +48,10 @@
     cursor: pointer;
 }
 
-@media only screen and (max-width: 600px) {
-    .time-setter-title {
-        text-align: left;
+@media only screen and (max-width: 700px) {
+    .time-setter-container {
+        width: auto;
+        margin: 0;
     }
 
     .time-setter-item {

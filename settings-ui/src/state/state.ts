@@ -7,7 +7,10 @@ const createSettingsMachine = () => {
     const [context, setContext] = createStore<SettingsStateContext>({
         hour: now.getHours(),
         minute: now.getMinutes(),
+
         events: [],
+
+        brightness: 100,
     });
 
     const send = (event: SettingsStateEvents) => {

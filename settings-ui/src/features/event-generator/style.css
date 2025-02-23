@@ -1,3 +1,7 @@
+.event-generator-container {
+    margin: 0 auto;
+}
+
 .events-generator-title-wrapper {
     display: flex;
     align-items: center;
@@ -10,4 +14,11 @@
 .events-generator-btn {
     padding: 5px 10px;
     cursor: pointer;
+}
+
+@media only screen and (max-width: 700px) {
+    .event-generator-container {
+        width: auto;
+        margin: 0;
+    }
 }

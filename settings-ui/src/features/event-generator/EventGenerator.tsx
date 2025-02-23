@@ -45,7 +45,7 @@ export default function EventGenerator() {
     });
 
     return (
-        <div>
+        <div class="event-generator-container">
             <div class="events-generator-title-wrapper">
                 <h2>Events</h2>
                 <span class="events-generator-dash">
