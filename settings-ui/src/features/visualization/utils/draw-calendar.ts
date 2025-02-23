@@ -15,6 +15,8 @@ export function drawCalendar(props: {
     canvasEl: HTMLCanvasElement,
     canvasSize: Size,
     events: CalendarEvent[],
+    activeEvent?: number,
+    blinkCycleHight: boolean,
 }) {
     const ctx = props.canvasEl.getContext('2d');
     if (!ctx) {
@@ -47,29 +49,26 @@ export function drawCalendar(props: {
             ctx.fillStyle = LED_DOT_DEFAULT_COLOR;
             ctx.fillRect(x, y, ledDotInnerWidth, ledDotInnerWidth);
 
-            let fillStyle = LED_DOT_DEFAULT_COLOR;
-
             if (event && ledIndex >= event.startLedIndex && ledIndex <= event.endLedIndex) {
-                fillStyle = event.color;
+                let dotOpacity = 1;
+
+                if (props.activeEvent !== undefined && (eventIndex !== props.activeEvent || !props.blinkCycleHight)) {
+                    dotOpacity = 0.5;
+                }
+                
+                ctx.save();
+                ctx.filter = `opacity(${dotOpacity})`;
+                ctx.beginPath();
+                ctx.fillStyle = event.color;
+                ctx.arc(x + ledDotInnerWidth / 2, y + ledDotInnerWidth / 2, ledDotInnerWidth / 2, 0, 10);
+                ctx.fill();
+                ctx.restore();
                 
                 if (ledIndex === event.endLedIndex) {
                     eventIndex++;
                     event = props.events[eventIndex];
                 }
             }
-
-            ctx.save();
-            ctx.filter = 'blur(5px) opacity(0.5)';
-            ctx.beginPath();
-            ctx.fillStyle = fillStyle;
-            ctx.arc(x + ledDotInnerWidth / 2, y + ledDotInnerWidth / 2, ledDotInnerWidth / 1.5, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
-            
-            ctx.beginPath();
-            ctx.fillStyle = fillStyle;
-            ctx.arc(x + ledDotInnerWidth / 2, y + ledDotInnerWidth / 2, ledDotInnerWidth / 2.5, 0, 10);
-            ctx.fill();
         }        
     }
 }

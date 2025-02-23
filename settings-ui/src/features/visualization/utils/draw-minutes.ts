@@ -46,17 +46,9 @@ export function drawMinutes(props: {
             ctx.fillRect(x, y, ledDotInnerWidth, ledDotInnerWidth);
 
             if (i === props.activeHour && props.activeMinute / 10 >= j) {
-                ctx.save();
-                ctx.filter = 'blur(5px) opacity(0.5)';
                 ctx.beginPath();
                 ctx.fillStyle = MINUTE_DEFAULT_ACTIVE_COLOR;
-                ctx.arc(x + ledDotInnerWidth / 2, y + ledDotInnerWidth / 2, ledDotInnerWidth / 1.5, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.restore();
-                
-                ctx.beginPath();
-                ctx.fillStyle = MINUTE_DEFAULT_ACTIVE_COLOR;
-                ctx.arc(x + ledDotInnerWidth / 2, y + ledDotInnerWidth / 2, ledDotInnerWidth / 2.5, 0, 10);
+                ctx.arc(x + ledDotInnerWidth / 2, y + ledDotInnerWidth / 2, ledDotInnerWidth / 2, 0, 10);
                 ctx.fill();
             }
         }        

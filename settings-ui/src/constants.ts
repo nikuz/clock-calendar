@@ -17,3 +17,25 @@ export const MINUTE_DEFAULT_ACTIVE_COLOR = '#00FF00';
 export const HOLDER_IMAGE_URL = `/${packageSettings.name}/holder.svg`;
 export const HOLDER_SIZE = 5.8; // percents of the screen width
 export const LINER_COLOR = 'rgba(200, 200, 200, 0.5)';
+
+export const EVENT_COLORS = [
+    '#00ffff',    // Cyan
+    '#ff4500',    // Orange Red
+    '#ffa600',    // Orange
+    '#8a2be2',    // Blue Violet
+    '#ff00ff',    // Magenta
+    '#8b4513',    // Brown
+    '#32cd32',    // Lime
+    '#ffd900',    // Gold
+    '#40e0d0',    // Turquoise
+    '#ffc0cb',    // Pink
+    '#dc143c',    // Crimson
+    '#e6e6fa',    // Lavender
+    '#808000',    // Olive
+    '#00ff7f',    // Spring Green
+    '#4682b4',    // Steel Blue
+    '#daa520',    // Goldenrod
+    '#ff69b4',    // Hot Pink
+    '#228b22',    // Forest Green
+    '#800000',    // Maroon
+];

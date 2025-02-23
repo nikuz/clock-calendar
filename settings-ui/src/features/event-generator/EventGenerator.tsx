@@ -1,9 +1,9 @@
 import { onMount } from 'solid-js';
 import { settingsMachineActor } from 'src/state';
 import { timeUtils, ledUtils } from 'src/utils';
+import { EVENT_COLORS } from 'src/constants';
 import { CalendarEvent } from 'src/types';
 import { EventsList } from './components';
-import { EVENT_COLORS } from './constants';
 import './style.css';
 
 export default function EventGenerator() {

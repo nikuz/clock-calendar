@@ -4,6 +4,7 @@ export interface SettingsStateContext {
     hour: number,
     minute: number,
     events: CalendarEvent[],
+    activeEvent?: number,
 }
 
 export interface SetHourEvent {
@@ -21,7 +22,16 @@ export interface SetEventsEvent {
     events: CalendarEvent[],
 }
 
+export interface SetActiveEventEvent {
+    type: 'SET_ACTIVE_EVENT',
+    index: number,
+}
+
+export interface ClearActiveEventEvent { type: 'CLEAR_ACTIVE_EVENT' }
+
 export type SettingsStateEvents =
     | SetHourEvent
     | SetMinuteEvent
-    | SetEventsEvent;
+    | SetEventsEvent
+    | SetActiveEventEvent
+    | ClearActiveEventEvent;

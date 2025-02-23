@@ -9,7 +9,7 @@ export function EventsList() {
     return (
         <ul class="event-list">
             <For each={events()}>
-                {(item) => <EventListItem {...item} />}
+                {(item, index) => <EventListItem {...item} index={index()} />}
             </For>
         </ul>
     );

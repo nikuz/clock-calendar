@@ -23,6 +23,14 @@ const createSettingsMachine = () => {
             case 'SET_EVENTS':
                 setContext('events', event.events);
                 break;
+            
+            case 'SET_ACTIVE_EVENT':
+                setContext('activeEvent', event.index);
+                break;
+            
+            case 'CLEAR_ACTIVE_EVENT':
+                setContext('activeEvent', undefined);
+                break;
         }
     };
 

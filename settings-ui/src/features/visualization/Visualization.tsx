@@ -19,10 +19,13 @@ export default function Visualization() {
     const hour = useSettingsStateSelect('hour');
     const minute = useSettingsStateSelect('minute');
     const calendarEvents = useSettingsStateSelect('events');
+    const calendarActiveEvent = useSettingsStateSelect('activeEvent');
     const [canvasSize, setCanvasSize] = createSignal<Size>({ width: 0, height: 0 });
+    const [calendarEventsBlinkCycleHigh, setCalendarEventsBlinkCycleHigh] = createSignal(true);
     let canvasEl: HTMLCanvasElement | undefined;;
     let holderImageEl: HTMLImageElement | undefined;;
     let resizeObserver: ResizeObserver | undefined;
+    let calendarEventsBlinkTimer: ReturnType<typeof setInterval>;
 
     const resizeHandler = (entries: ResizeObserverEntry[]) => {
         if (!canvasEl) {
@@ -64,6 +67,8 @@ export default function Visualization() {
             canvasEl,
             canvasSize: canvasSize(),
             events: calendarEvents(),
+            activeEvent: calendarActiveEvent(),
+            blinkCycleHight: calendarEventsBlinkCycleHigh(),
         });
         drawHolders({
             canvasEl,
@@ -94,6 +99,19 @@ export default function Visualization() {
         image.onload = drawHandler;
     });
 
+    createEffect(() => {
+        if (calendarActiveEvent() === undefined) {
+            setCalendarEventsBlinkCycleHigh(true);
+            clearInterval(calendarEventsBlinkTimer);
+        } else {
+            calendarEventsBlinkTimer = setInterval(() => {
+                if (calendarActiveEvent() !== undefined) {
+                    setCalendarEventsBlinkCycleHigh(!calendarEventsBlinkCycleHigh());
+                }
+            }, 1000);
+        }
+    });
+
     onMount(() => {
         resizeObserver = new ResizeObserver(resizeHandler);
         if (canvasEl) {
@@ -105,6 +123,7 @@ export default function Visualization() {
         if (canvasEl) {
             resizeObserver?.unobserve(canvasEl);
         }
+        clearInterval(calendarEventsBlinkTimer);
     });
 
     return <>
