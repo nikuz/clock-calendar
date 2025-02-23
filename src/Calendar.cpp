@@ -116,18 +116,18 @@ void Calendar::showEvents(uint16_t brightness) {
         if (isNight) {
             calendarLeds.setPixelColor(i, OFF_COLOR);
         } else {
-            if (i >= event.startLedIndex && i < event.endLedIndex) {
+            if (i >= event.startLedIndex && i <= event.endLedIndex) {
                 calendarLeds.setPixelColor(i, eventColor);
+
+                if (i == event.endLedIndex) {
+                    eventIndex++;
+                    if (eventIndex < todaysEvents.size()) {
+                        event = todaysEvents[eventIndex];
+                        eventColor = getEventColor(eventIndex, timeinfo.tm_sec, currentBrightness);
+                    }
+                }
             } else {
                 calendarLeds.setPixelColor(i, OFF_COLOR);
-            }
-
-            if (i == event.endLedIndex - 1) {
-                eventIndex++;
-                if (eventIndex < todaysEvents.size()) {
-                    event = todaysEvents[eventIndex];
-                    eventColor = getEventColor(eventIndex, timeinfo.tm_sec, currentBrightness);
-                }
             }
         }
     }
@@ -297,12 +297,12 @@ void Calendar::retrieveEvents() {
                                     }
                                 }
 
-                                int startLedIndex = startTime.tm_hour * LEDS_PER_HOUR + startTime.tm_min / 10;
+                                int startLedIndex = getLedIndexFromTime(startTime, true);
 
                                 String dtEnd = vevent.substring(endIdx + 6, vevent.indexOf("\n", endIdx));
                                 dtEnd.trim();
                                 struct tm endTime = Utils::convertToLocalTime(Utils::parseDateTime(dtEnd));
-                                int endLedIndex = endTime.tm_hour * LEDS_PER_HOUR + endTime.tm_min / 10;
+                                int endLedIndex = getLedIndexFromTime(endTime, false);
 
                                 String status = vevent.substring(statusIdx + 7, vevent.indexOf("\n", statusIdx));
                                 status.trim();
@@ -339,4 +339,14 @@ void Calendar::retrieveEvents() {
     } else {
         Serial.println("Unable to create client");
     }
+}
+
+int Calendar::getLedIndexFromTime(const struct tm &utcTime, bool inclusive) {
+    int index = utcTime.tm_hour * LEDS_PER_HOUR + (utcTime.tm_min / 10);
+
+    if (!inclusive && index > 0 && utcTime.tm_min % 10 == 0) {
+        index--;
+    }
+
+    return index;
 }

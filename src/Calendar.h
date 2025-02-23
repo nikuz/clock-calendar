@@ -48,6 +48,8 @@ class Calendar {
     static void clearLoading();
 
     static float getCalendarBrightness(uint16_t brightness);
+
+    static int getLedIndexFromTime(const struct tm& utcTime, bool inclusive);
 };
 
 #endif /* Calendar_h */
