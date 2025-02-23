@@ -43,6 +43,10 @@ export function drawCalendar(props: {
         for (let j = 0; j < LEDS_PER_HOUR; j++) {
             const ledIndex = i * LEDS_PER_HOUR + j;
             const x = hourX + ledDotSpacing / 2 + ledDotWidth * j;
+
+            ctx.fillStyle = LED_DOT_DEFAULT_COLOR;
+            ctx.fillRect(x, y, ledDotInnerWidth, ledDotInnerWidth);
+
             let fillStyle = LED_DOT_DEFAULT_COLOR;
 
             if (event && ledIndex >= event.startLedIndex && ledIndex <= event.endLedIndex) {
@@ -54,8 +58,18 @@ export function drawCalendar(props: {
                 }
             }
 
+            ctx.save();
+            ctx.filter = 'blur(5px) opacity(0.5)';
+            ctx.beginPath();
             ctx.fillStyle = fillStyle;
-            ctx.fillRect(x, y, ledDotInnerWidth, ledDotInnerWidth);
+            ctx.arc(x + ledDotInnerWidth / 2, y + ledDotInnerWidth / 2, ledDotInnerWidth / 1.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+            
+            ctx.beginPath();
+            ctx.fillStyle = fillStyle;
+            ctx.arc(x + ledDotInnerWidth / 2, y + ledDotInnerWidth / 2, ledDotInnerWidth / 2.5, 0, 10);
+            ctx.fill();
         }        
     }
 }
