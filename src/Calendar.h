@@ -11,6 +11,15 @@ struct CalendarEvent {
     int startLedIndex;
     int endLedIndex;
     uint32_t color;
+
+    bool operator==(const CalendarEvent& other) const {
+        time_t rawStartTime = mktime((struct tm*)&startTime);
+        time_t rawEndTime = mktime((struct tm*)&endTime);
+        time_t rawOtherStartTime = mktime((struct tm*)&other.startTime);
+        time_t rawOtherEndTime = mktime((struct tm*)&other.endTime);
+
+        return rawStartTime == rawOtherStartTime && rawEndTime == rawOtherEndTime;
+    }
 };
 
 struct NextCalendarEvent {

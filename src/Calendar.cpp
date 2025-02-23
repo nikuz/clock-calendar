@@ -307,15 +307,11 @@ void Calendar::retrieveEvents() {
                                 String status = vevent.substring(statusIdx + 7, vevent.indexOf("\n", statusIdx));
                                 status.trim();
 
-                                events.push_back({
-                                    startTime,
-                                    endTime,
-                                    status,
-                                    summary,
-                                    startLedIndex,
-                                    endLedIndex,
-                                    color,
-                                });
+                                CalendarEvent newEvent = {startTime, endTime, status, summary, startLedIndex, endLedIndex, color};
+
+                                if (std::find(events.begin(), events.end(), newEvent) == events.end()) {
+                                    events.push_back(newEvent);
+                                }
                             }
                         }
 
