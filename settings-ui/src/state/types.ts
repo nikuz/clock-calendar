@@ -1,6 +1,9 @@
+import { CalendarEvent } from 'src/types';
+
 export interface SettingsStateContext {
     hour: number,
     minute: number,
+    events: CalendarEvent[],
 }
 
 export interface SetHourEvent {
@@ -13,6 +16,12 @@ export interface SetMinuteEvent {
     minute: number,
 }
 
+export interface SetEventsEvent {
+    type: 'SET_EVENTS',
+    events: CalendarEvent[],
+}
+
 export type SettingsStateEvents =
     | SetHourEvent
-    | SetMinuteEvent;
+    | SetMinuteEvent
+    | SetEventsEvent;

@@ -1,0 +1,13 @@
+.events-generator-title-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.events-generator-dash {
+    margin: 0 20px;
+}
+
+.events-generator-btn {
+    padding: 5px 10px;
+    cursor: pointer;
+}

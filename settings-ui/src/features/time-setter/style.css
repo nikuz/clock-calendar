@@ -1,16 +1,13 @@
-.time-setter-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    max-width: 1000px;
-    margin: 5px auto;
-    color: #FFF;
+.time-setter-title {
+    text-align: center;
 }
 
 .time-setter-item {
     display: flex;
     align-items: center;
-    margin: 20px 50px;
+    min-width: 200px;
+    max-width: 50%;
+    margin: 30px auto;
 }
 
 .time-setter-label {
@@ -48,4 +45,14 @@
     background: #007bff;
     border-radius: 50%;
     cursor: pointer;
+}
+
+@media only screen and (max-width: 600px) {
+    .time-setter-title {
+        text-align: left;
+    }
+
+    .time-setter-item {
+        margin: 30px 0;
+    }
 }

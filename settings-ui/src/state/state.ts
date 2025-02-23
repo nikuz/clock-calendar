@@ -3,9 +3,11 @@ import { createStore } from 'solid-js/store';
 import { SettingsStateContext, SettingsStateEvents } from './types';
 
 const createSettingsMachine = () => {
+    const now = new Date();
     const [context, setContext] = createStore<SettingsStateContext>({
-        hour: 0,
-        minute: 0,
+        hour: now.getHours(),
+        minute: now.getMinutes(),
+        events: [],
     });
 
     const send = (event: SettingsStateEvents) => {
@@ -16,6 +18,10 @@ const createSettingsMachine = () => {
             
             case 'SET_MINUTE':
                 setContext('minute', event.minute);
+                break;
+            
+            case 'SET_EVENTS':
+                setContext('events', event.events);
                 break;
         }
     };

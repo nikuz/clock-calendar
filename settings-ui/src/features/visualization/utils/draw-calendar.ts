@@ -7,12 +7,14 @@ import {
     LEDS_PER_HOUR,
     LED_DOT_DEFAULT_COLOR,
 } from 'src/constants';
+import { CalendarEvent } from 'src/types';
 import { Size } from '../types';
 import { remapValue } from './remap-value';
 
 export function drawCalendar(props: {
     canvasEl: HTMLCanvasElement,
     canvasSize: Size,
+    events: CalendarEvent[],
 }) {
     const ctx = props.canvasEl.getContext('2d');
     if (!ctx) {
@@ -33,12 +35,24 @@ export function drawCalendar(props: {
     const ledDotSpacing = ledDotWidth - ledDotInnerWidth;
     const y = props.canvasSize.height / 2 + hourHeight / 2 - ledStripHeight;
     const totalHoursWidth = hourWidth * HOUR_AMOUNT;
+    let eventIndex = 0;
+    let event = props.events[eventIndex];
 
     for (let i = 0; i < HOUR_AMOUNT; i++) {
         const hourX = props.canvasSize.width / 2 - totalHoursWidth / 2 + hourWidth * i;
         for (let j = 0; j < LEDS_PER_HOUR; j++) {
+            const ledIndex = i * LEDS_PER_HOUR + j;
             const x = hourX + ledDotSpacing / 2 + ledDotWidth * j;
             let fillStyle = LED_DOT_DEFAULT_COLOR;
+
+            if (event && ledIndex >= event.startLedIndex && ledIndex <= event.endLedIndex) {
+                fillStyle = event.color;
+                
+                if (ledIndex === event.endLedIndex) {
+                    eventIndex++;
+                    event = props.events[eventIndex];
+                }
+            }
 
             ctx.fillStyle = fillStyle;
             ctx.fillRect(x, y, ledDotInnerWidth, ledDotInnerWidth);

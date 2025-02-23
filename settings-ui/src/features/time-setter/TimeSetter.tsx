@@ -21,7 +21,9 @@ export default function TimeSetter() {
     };
 
     return (
-        <div class="time-setter-container">
+        <div>
+            <h2 class="time-setter-title">Time</h2>
+
             <div class="time-setter-item">
                 <div class="time-setter-label">Hour:</div>
                 <input

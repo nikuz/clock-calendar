@@ -43,7 +43,7 @@ export function drawHolders(props: {
 
     const totalHoursWidth = hourWidth * HOUR_AMOUNT;
     const leftX = props.canvasSize.width / 2 - totalHoursWidth / 2 - holderWidth - holderWidth / 100;
-    const y = props.canvasSize.height / 2 - hourHeight / 2 - ledStripHeight * 2 - holderHeight / 150;
+    const y = props.canvasSize.height / 2 - hourHeight / 2 - ledStripHeight * 2 - holderHeight / 180;
 
     ctx.drawImage(props.image, leftX, y, holderWidth, holderHeight);
 

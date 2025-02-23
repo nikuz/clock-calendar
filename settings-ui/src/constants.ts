@@ -11,7 +11,6 @@ export const HOUR_DIGIT_DEFAULT_COLOR = 'rgba(104, 104, 104, 0.1)';
 export const HOUR_DIGIT_DEFAULT_ACTIVE_COLOR = '#FFF';
 export const HOUR_FONT_URL = `/${packageSettings.name}/Rubik-font.woff2`;
 export const LED_DOT_DEFAULT_COLOR = 'rgba(183, 183, 183, 0.4)';
-export const LED_STRIP_LENGTH = 144; // amount of LED dots
 export const LED_STRIP_HOUR_BOX_HEIGHT_RATIO = 0.2;
 export const LEDS_PER_HOUR = 6;
 export const MINUTE_DEFAULT_ACTIVE_COLOR = '#00FF00';

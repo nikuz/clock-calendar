@@ -18,6 +18,7 @@ import './style.css';
 export default function Visualization() {
     const hour = useSettingsStateSelect('hour');
     const minute = useSettingsStateSelect('minute');
+    const calendarEvents = useSettingsStateSelect('events');
     const [canvasSize, setCanvasSize] = createSignal<Size>({ width: 0, height: 0 });
     let canvasEl: HTMLCanvasElement | undefined;;
     let holderImageEl: HTMLImageElement | undefined;;
@@ -62,6 +63,7 @@ export default function Visualization() {
         drawCalendar({
             canvasEl,
             canvasSize: canvasSize(),
+            events: calendarEvents(),
         });
         drawHolders({
             canvasEl,
