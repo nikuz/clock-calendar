@@ -54,7 +54,7 @@ export function drawMinutes(props: {
                 ctx.globalAlpha = 1;
                 ctx.beginPath();
                 ctx.fillStyle = MINUTE_DEFAULT_ACTIVE_COLOR;
-                if (props.brightness < NIGHT_BRIGHTNESS_THRESHOLD) {
+                if (props.brightness <= NIGHT_BRIGHTNESS_THRESHOLD) {
                     ctx.fillStyle = NIGHT_TIME_COLOR;
                 }
                 ctx.arc(x + ledDotInnerWidth / 2, y + ledDotInnerWidth / 2, ledDotInnerWidth / 2, 0, 10);

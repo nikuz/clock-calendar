@@ -6,6 +6,7 @@ import {
     LED_STRIP_HOUR_BOX_HEIGHT_RATIO,
     LEDS_PER_HOUR,
     LED_DOT_DEFAULT_COLOR,
+    NIGHT_BRIGHTNESS_THRESHOLD,
 } from 'src/constants';
 import { CalendarEvent } from 'src/types';
 import { Size } from '../types';
@@ -17,6 +18,7 @@ export function drawCalendar(props: {
     events: CalendarEvent[],
     activeEvent?: number,
     blinkCycleHight: boolean,
+    brightness: number,
 }) {
     const ctx = props.canvasEl.getContext('2d');
     if (!ctx) {
@@ -43,6 +45,7 @@ export function drawCalendar(props: {
     for (let i = 0; i < HOUR_AMOUNT; i++) {
         const hourX = props.canvasSize.width / 2 - totalHoursWidth / 2 + hourWidth * i;
         for (let j = 0; j < LEDS_PER_HOUR; j++) {
+            ctx.globalAlpha = props.brightness / 100;
             const ledIndex = i * LEDS_PER_HOUR + j;
             const x = hourX + ledDotSpacing / 2 + ledDotWidth * j;
 
@@ -50,6 +53,10 @@ export function drawCalendar(props: {
             ctx.fillRect(x, y, ledDotInnerWidth, ledDotInnerWidth);
 
             if (event && ledIndex >= event.startLedIndex && ledIndex <= event.endLedIndex) {
+                if (props.brightness > NIGHT_BRIGHTNESS_THRESHOLD) {
+                    ctx.globalAlpha = Math.min(props.brightness / 100 * 2, 1);
+                }
+
                 let dotOpacity = 1;
 
                 if (props.activeEvent !== undefined && (eventIndex !== props.activeEvent || !props.blinkCycleHight)) {
@@ -71,4 +78,6 @@ export function drawCalendar(props: {
             }
         }        
     }
+
+    ctx.globalAlpha = props.brightness / 100;
 }

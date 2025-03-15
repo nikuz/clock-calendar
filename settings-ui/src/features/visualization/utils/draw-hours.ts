@@ -61,7 +61,7 @@ export function drawHours(props: {
 
         ctx.fillStyle = isActiveHour ? HOUR_DIGIT_DEFAULT_ACTIVE_COLOR : HOUR_DIGIT_DEFAULT_COLOR;
 
-        if (isActiveHour && props.brightness < NIGHT_BRIGHTNESS_THRESHOLD) {
+        if (isActiveHour && props.brightness <= NIGHT_BRIGHTNESS_THRESHOLD) {
             ctx.fillStyle = NIGHT_TIME_COLOR;
         }
 

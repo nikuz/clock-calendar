@@ -72,6 +72,7 @@ export default function Visualization() {
             events: calendarEvents(),
             activeEvent: calendarActiveEvent(),
             blinkCycleHight: calendarEventsBlinkCycleHigh(),
+            brightness: brightness(),
         });
         drawHolders({
             canvasEl,
