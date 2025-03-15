@@ -5,7 +5,6 @@ import {
     getDevicePixelRatio,
     clearCanvas,
     scaleCanvas,
-    drawBackground,
     drawHours,
     drawMinutes,
     drawCalendar,
@@ -20,6 +19,7 @@ export default function Visualization() {
     const minute = useSettingsStateSelect('minute');
     const calendarEvents = useSettingsStateSelect('events');
     const calendarActiveEvent = useSettingsStateSelect('activeEvent');
+    const brightness = useSettingsStateSelect('brightness');
     const [canvasSize, setCanvasSize] = createSignal<Size>({ width: 0, height: 0 });
     const [calendarEventsBlinkCycleHigh, setCalendarEventsBlinkCycleHigh] = createSignal(true);
     let canvasEl: HTMLCanvasElement | undefined;;
@@ -45,9 +45,10 @@ export default function Visualization() {
             return;
         }
 
+        ctx.globalAlpha = brightness() / 100;
+
         clearCanvas(canvasEl);
 
-        drawBackground(canvasEl, canvasSize());
         drawLiner({
             canvasEl,
             canvasSize: canvasSize(),
@@ -56,12 +57,14 @@ export default function Visualization() {
             canvasEl,
             canvasSize: canvasSize(),
             activeHour: hour(),
+            brightness: brightness(),
         });
         drawMinutes({
             canvasEl,
             canvasSize: canvasSize(),
             activeHour: hour(),
             activeMinute: minute(),
+            brightness: brightness(),
         });
         drawCalendar({
             canvasEl,

@@ -34,6 +34,10 @@ const createSettingsMachine = () => {
             case 'CLEAR_ACTIVE_EVENT':
                 setContext('activeEvent', undefined);
                 break;
+            
+            case 'SET_BRIGHTNESS':
+                setContext('brightness', event.value);
+                break;
         }
     };
 

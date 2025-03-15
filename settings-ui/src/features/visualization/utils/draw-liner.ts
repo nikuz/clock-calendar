@@ -29,9 +29,10 @@ export function drawLiner(props: {
     const ledStripHeight = hourHeight * LED_STRIP_HOUR_BOX_HEIGHT_RATIO;
 
     const totalHoursWidth = hourWidth * HOUR_AMOUNT;
-    const x = props.canvasSize.width / 2 - totalHoursWidth / 2 - hourWidth / 10;
+    const margin = 4;
+    const x = props.canvasSize.width / 2 - totalHoursWidth / 2 - margin;
     const y = props.canvasSize.height / 2 - hourHeight / 2 - ledStripHeight * 2;
-    const width = props.canvasSize.width / 2 + totalHoursWidth / 2 - x + hourWidth / 10;
+    const width = props.canvasSize.width / 2 + totalHoursWidth / 2 - x + margin;
     const height = hourHeight + ledStripHeight * 2 - ledStripHeight / 6;
 
     ctx.fillStyle = LINER_COLOR;

@@ -9,7 +9,7 @@ export default function BrightnessSetter() {
     const setBrightnessHandler: JSX.EventHandler<HTMLInputElement, InputEvent> = (event) => {
         settingsMachineActor.send({
             type: 'SET_BRIGHTNESS',
-            hour: Number(event.currentTarget.value),
+            value: Number(event.currentTarget.value),
         });
     };
 

@@ -34,7 +34,7 @@ export interface ClearActiveEventEvent { type: 'CLEAR_ACTIVE_EVENT' }
 
 export interface SetBrightnessEvent {
     type: 'SET_BRIGHTNESS',
-    hour: number,
+    value: number,
 }
 
 export type SettingsStateEvents =
