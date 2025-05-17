@@ -2,7 +2,7 @@
 
 [Simulation](https://nikuz.github.io/clock-calendar/)
 
-It's tough to get a good photo of this when it's on. The LEDs mess with my phone camera, making the digits and event dots look blurry. It looks way better in person. Here's the best side shot I could get.
+Capturing a clear photo of this device while it's on is challenging. The bright light of the LEDs messes with the phone's camera, causing the digits and event indicators to appear blurry. It looks much clearer and more impressive in person. Here's the best side view I managed to capture.
 
 ![calendar](/public/calendar.jpg)
 
