@@ -7,3 +7,5 @@ Capturing a clear photo of this device while it's on is challenging. The bright 
 ![calendar](/public/calendar.jpg)
 
 ![internals](/public/calendar-internals.jpg)
+
+[Improved version](https://github.com/nikuz/calendar-led-screen)
